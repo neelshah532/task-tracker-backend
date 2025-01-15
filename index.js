@@ -1,8 +1,10 @@
+// index.js
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import authRouter from './src/routes/AuthRoutes.js';
+import taskrouter from './src/routes/TaskRoutes.js';  // <-- Make sure this is imported correctly
 
 dotenv.config();
 
@@ -20,8 +22,8 @@ app.use(cors({
 app.use(cors());
 app.use(express.json());
 
-
 app.use('/api/auth', authRouter);
+app.use("/api/tasks", taskrouter);  // <-- Correctly use the imported router
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 
