@@ -31,7 +31,7 @@ export const createTask = async (req, res) => {
             description,
             status,
             priority,
-            userId: req.userId, // Ensure userId is passed correctly
+            userId: req.userId,
         });
 
         await newTask.save();
@@ -96,5 +96,59 @@ export const deleteTask = async (req, res) => {
         res.json({ message: "Task deleted successfully" });
     } catch (err) {
         res.status(500).json({ error: "Error deleting task" });
+    }
+};
+
+
+
+export const updateTaskStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        // Validate status
+        if (!['completed', 'incomplete'].includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid status value'
+            });
+        }
+
+        // Find and update the specific task
+        const task = await Task.findById(id);
+
+        if (!task) {
+            return res.status(404).json({
+                success: false,
+                message: 'Task not found'
+            });
+        }
+
+        // Verify user owns this task
+        const taskUserId = task.userId?.toString();
+        const currentUserId = req.userId?.toString();
+
+        // Verify user owns this task
+        if (taskUserId !== currentUserId) {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to update this task'
+            });
+        }
+
+        // Update the task status
+        task.status = status;
+        await task.save();
+
+        return res.json({
+            success: true,
+            data: task
+        });
+    } catch (error) {
+        console.error('Error updating task status:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error updating task status'
+        });
     }
 };
