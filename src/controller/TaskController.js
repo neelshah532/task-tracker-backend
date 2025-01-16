@@ -8,7 +8,7 @@ const validateTask = (task) => {
     if (task.description !== undefined && task.description.trim() === "") {
         errors.push("Description cannot be empty.");
     }
-    if (task.status && !["Incomplete", "Completed"].includes(task.status)) {
+    if (task.status && !["incomplete", "completed"].includes(task.status)) {
         errors.push("Invalid status.");
     }
     if (task.priority && !["Low", "Medium", "High"].includes(task.priority)) {
